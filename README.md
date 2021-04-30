@@ -3,8 +3,13 @@ Logker is a logging bot suitable for small to mid-size server range. Support bot
 
 ## Get Started
 If Logker never setup before, type this command. Your typing channel will be logs channel
-```|setup```or```|setup <desire_logs_channel_mention>```
-
+```
+|setup
+```
+or
+```
+|setup <desire_logs_channel_mention>
+```
 If Logker had setup before (Not first Logker invite)
 ```
 You're good to go, no second setup again.
