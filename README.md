@@ -2,10 +2,12 @@
 Logker is a logging bot suitable for small to mid-size server range. Support both Thai and English! (Bot under development!)
 
 ## Get Started
-If Logker never setup before, type this command
+If Logker never setup before, type this command. Your typing channel will be logs channel
 ```
 |setup
 ```
+or
+```|setup <desire_logs_channel_mention>```
 If Logker had setup before (Not first Logker invite)
 ```
 You're good to go, no second setup again.
