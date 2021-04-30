@@ -1,4 +1,4 @@
-# Get Started!
+## Get Started!
 If Logker never setup before, type this command. Your typing channel will be logs channel. (default language will be English.)
 ```
 |setup
