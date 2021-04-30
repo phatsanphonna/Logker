@@ -28,15 +28,11 @@ class Client(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        main_server = self.client.get_channel(833224379562590218)
-
         for channel in guild.text_channels:
             if channel.permissions_for(guild.me).send_messages:
                 owner = self.client.get_user(254515724804947969)
                 await channel.send(embed=client_events.guild_join(owner))
             break
-
-        await main_server.send(f'Logker got into {guild.name}!')
 
     @commands.command()
     async def info(self, ctx):
