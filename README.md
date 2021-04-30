@@ -2,35 +2,35 @@
 Logker is a logging bot suitable for small to mid-size server range. Support both Thai and English! (Bot under development!)
 
 ## Get Started
-If Logker never setup before, type this command. Your typing channel will be logs channel
+If Logker never setup before, type this command. Your typing channel will be logs channel.
 ```
 |setup
 ```
-or
+or you want to use other channels as logs channel, use this command.
 ```
 |setup <desire_logs_channel_mention>
 ```
-If Logker had setup before (Not first Logker invite)
+If Logker had setup before (Not first Logker invite).
 ```
 You're good to go, no second setup again.
 ```
 
 ## Basic Config
-If you want to see your server config/settings, use this command
+If you want to see your server config/settings, use this command.
 ```
 |config
 ```
 ```
 |settings
 ```
-If you want to change language, use this command. It will automatically toggle between Thai and English
+If you want to change language, use this command. It will automatically toggle between Thai and English.
 ```
 |config/settings lang
 ```
 ```
 |config/settings language
 ```
-If you want to change logging channel, use this command (ONLY TEXT CHANNELS!)
+If you want to change logging channel, use this command (ONLY TEXT CHANNELS!).
 ```
 |config/settings logs <channel_mention>
 ```
