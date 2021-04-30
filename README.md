@@ -38,9 +38,10 @@ If you want to change logging channel, use this command (ONLY TEXT CHANNELS!)
 ```
 
 ## Logker's Info
-High School small project created for competition to get into a university (If possible and hope committee will notice me).
+High School project created for competition to get into a university (If possible and hope committee will notice me). I hope this project can help me get into university.
+So, I want this to be my one of my portfolio to get a chance in competition.
 
-This bot based on discord.py library and in huge development! If you want to submit found bugs,  incorrect grammar or everything error that bot gives you will be huge thanks for me!. Please contact me at Discord: Sun#6284
+This bot based on discord.py library and in huge development! If you want to submit found bugs,  incorrect grammar or everything error that bot gives you will be huge thanks for me! Please contact me at Discord: Sun#6284
 
 #### Lanugage Support
 - Thai
