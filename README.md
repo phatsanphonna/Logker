@@ -28,13 +28,13 @@ If you want to change language, use this command. It will automatically toggle b
 ```
 If you want to change logging channel, use this command (ONLY TEXT CHANNELS!)
 ```
-|config/settings channel <channel_mention>
-```
-```
-|config/settings logschannel <channel_mention>
+|config/settings logs <channel_mention>
 ```
 ```
 |config/settings lc <channel_mention>
+```
+```
+|config/settings logschannel <channel_mention>
 ```
 
 ## Logker's Info
