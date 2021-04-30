@@ -1,4 +1,5 @@
 ## Config Commands
+This covered your server config of Logker.
 
 #### This will shows your server config of Logker
 ```
