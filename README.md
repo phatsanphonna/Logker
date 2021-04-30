@@ -8,13 +8,16 @@ If Logker never setup before, type this command
 ```
 If Logker had setup before (Not first Logker invite)
 ```
-You're good to go, no setup again.
+You're good to go, no second setup again.
 ```
 
 ## Basic Config
 If you want to see your server config/settings, use this command
 ```
-|config / |setting
+|config
+```
+```
+|settings
 ```
 If you want to change language, use this command. It will automatically toggle between Thai and English
 ```
