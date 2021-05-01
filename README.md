@@ -3,6 +3,7 @@ Logker is a logging bot suitable for small to mid-size server range. Support bot
 <br>Logker เป็นบอทเก็บประวัติ เหมาะสำหรับ เซิฟเวอร์ขนาดเล็ก ถึง ปานกลาง รองรับทั้งภาษาไทย และ ภาษาอังกฤษ.
 <br>
 #### Please read [privacy policy](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md) first!
+#### ได้โปรดอ่าน[นโยบายความเป็นส่วนตัว](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md)ก่อนนะครับ!
 
 ## Get Started
 If Logker never setup before, type this command. Your typing channel will be logs channel. (default language will be English.)
