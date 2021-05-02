@@ -1,4 +1,4 @@
-# Logker Privacy Policy
+# Logker Dev Privacy Policy Requests
 
 ### English
 Logker will send only information about name when bot join the servers.
