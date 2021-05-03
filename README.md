@@ -5,6 +5,14 @@ Logker is a logging bot suitable for small to mid-size server range. Support bot
 #### Please read [privacy policy](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md) first!<br>ได้โปรดอ่าน[นโยบายความเป็นส่วนตัว](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md)ก่อนนะครับ!
 
 ## Get Started
+If you don't konw Logker'as prefix, you can ping Logker or type this
+<br> ถ้าไม่รู้ prefix ของ Logker ให้ปิง Logker หรือพิมพ์ตามนี้
+```
+Logker, What is your prefix?
+```
+```
+Logker, prefix ของแกคืออะไร
+```
 If Logker never setup before, type this command. Your typing channel will be logs channel. (default language will be English.)
 <br>ถ้า Logker ไม่เคยตั้งค่ามาก่อน ให้ใช้คำสั่งนี้ ช่องที่พิมพ์จะถูกตั้งค่าเป็นช่องเก็บประวัติโดยอัตโนมัติ (ภาษาเริ่มต้นเป็น ภาษาอังกฤษ)
 ```
