@@ -1,4 +1,7 @@
 # Logker
+<p align="center">
+  img src="https://user-images.githubusercontent.com/58100334/119252356-f9e69b00-bbd5-11eb-9406-2810090523e8.png">
+</p>
 Logker is a logging bot suitable for small to mid-size server range. Support both Thai and English!
 <br>Logker เป็นบอทเก็บประวัติ เหมาะสำหรับ เซิฟเวอร์ขนาดเล็ก ถึง ปานกลาง รองรับทั้งภาษาไทย และ ภาษาอังกฤษ.
 <br>
