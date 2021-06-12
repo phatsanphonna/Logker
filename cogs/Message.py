@@ -1,6 +1,6 @@
 from discord.ext import commands
-import events.message_events as message_events
-from events.find_info import find_guild_info
+from messages import message_events_msg
+from utils.database import Database
 
 
 class Message(commands.Cog):
@@ -13,17 +13,20 @@ class Message(commands.Cog):
             return
 
         # Seek info of guild
-        info = await find_guild_info(message.guild.id)
+        info = await Database.find_info(message.guild.id)
+
+        if info is None:
+            return
 
         # Check if guild_id is equal to message.guild.id
-        if info['guild_id'] == message.guild.id:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info[0] == message.guild.id:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                message_events.message_delete_en(message) if config_lang == 'EN'
-                else message_events.message_delete_th(message)
+                message_events_msg.message_delete_en(message) if config_lang == 'en'
+                else message_events_msg.message_delete_th(message)
             )
 
             await logs_channel.send(embed=embed)
@@ -34,17 +37,20 @@ class Message(commands.Cog):
             return
 
         # Seek info of guild
-        info = await find_guild_info(payload.guild_id)
+        info = await Database.find_info(payload.guild_id)
+
+        if info is None:
+            return
 
         # Check if guild_id is equal to message.guild.id
-        if info['guild_id'] == payload.guild_id:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info[0] == payload.guild_id:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                message_events.raw_message_edit_en(payload.cached_message) if config_lang == 'EN'
-                else message_events.raw_message_edit_th(payload.cached_message)
+                message_events_msg.raw_message_edit_en(payload.cached_message) if config_lang == 'en'
+                else message_events_msg.raw_message_edit_th(payload.cached_message)
             )
 
             await logs_channel.send(embed=embed)
@@ -55,18 +61,21 @@ class Message(commands.Cog):
             return
 
         # Seek info of guild
-        info = await find_guild_info(after.guild.id)
+        info = await Database.find_info(before.guild.id)
+
+        if info is None:
+            return
 
         # Check if guild_id is equal to message.guild.id
-        if info['guild_id'] == after.guild.id:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info[0] == after.guild.id:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.content != after.content:
                 # Set language version of embed message
                 embed = (
-                    message_events.message_edit_en(before, after) if config_lang == 'EN'
-                    else message_events.message_edit_th(before, after)
+                    message_events_msg.message_edit_en(before, after) if config_lang == 'en'
+                    else message_events_msg.message_edit_th(before, after)
                 )
 
                 await logs_channel.send(embed=embed)
@@ -77,17 +86,20 @@ class Message(commands.Cog):
             return
 
         # Seek info of guild
-        info = await find_guild_info(payload.guild_id)
+        info = await Database.find_info(payload.guild_id)
+
+        if info is None:
+            return
 
         # Check if guild_id is equal to payload.guild.id
-        if info['guild_id'] == payload.guild_id:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info[0] == payload.guild_id:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                message_events.raw_message_edit_en(payload.cached_message) if config_lang == 'EN'
-                else message_events.raw_message_edit_th(payload.cached_message)
+                message_events_msg.raw_message_edit_en(payload.cached_message) if config_lang == 'en'
+                else message_events_msg.raw_message_edit_th(payload.cached_message)
             )
 
             await logs_channel.send(embed=embed)

@@ -1,12 +1,13 @@
 import discord
 from discord.ext import commands
-from events.find_info import find_guild_info
+from utils.database import Database
 
 
 def help_en():
     embed = discord.Embed(
         title='Lists of Logker Commands!',
-        color=discord.Color.gold()
+        color=discord.Color.gold(),
+        description='List of Commands. Full version [here](https://github.com/ssuniie/Logker/tree/main/docs/en)'
     )
     embed.add_field(
         name='help',
@@ -25,27 +26,39 @@ def help_en():
         )
     )
     embed.add_field(
-        name='config/setting',
+        name='config',
         inline=False,
         value=(
             'Show config of your server\n'
-            '**Usage**: `|config` or `|setting`'
+            '**Usage**: `|config`\n'
+            '**Aliases**: settings'
         )
     )
     embed.add_field(
-        name='config language/lang',
+        name='config language',
         inline=False,
         value=(
             'Switch language between Thai and English\n'
-            '**Usage**: `|config language` or `|config lang`'
+            '**Usage**: `|config language`\n'
+            '**Aliases**: lang'
         )
     )
     embed.add_field(
-        name='config channel/logschannel\n',
+        name='config channel',
         inline=False,
         value=(
             'Change channel that logs store in\n'
-            '**Usage**: `|config channel {channel}` or `|config logschannel {channel}`'
+            '**Usage**: `|config lc <channel>`\n'
+            '**Aliases**: logs, lc, logschannel'
+        )
+    )
+    embed.add_field(
+        name='config changePrefix',
+        inline=False,
+        value=(
+            'Change prefix of Logker (default is |)\n'
+            '**Usage**: `|config changePrefix <prefix>`\n'
+            '**Aliases**: prefix, changeprefix'
         )
     )
     return embed
@@ -54,7 +67,8 @@ def help_en():
 def help_th():
     embed = discord.Embed(
         title='คำสั่งทั้งหมดของ Logker',
-        color=discord.Color.gold()
+        color=discord.Color.gold(),
+        description='คำสั่งทั้งหมดแบบเต็มๆ [ที่นี่](https://github.com/ssuniie/Logker/tree/main/docs/th)'
     )
     embed.add_field(
         name='help',
@@ -73,27 +87,39 @@ def help_th():
         )
     )
     embed.add_field(
-        name='config/setting',
+        name='config',
         inline=False,
         value=(
             'แสดงการตั้งค่าของเซิฟเวอร์\n'
-            + '**การใช้งาน**: `|config` or `|setting`'
+            '**การใช้งาน**: `|config`\n'
+            '**คำเหมือน**: settings'
         )
     )
     embed.add_field(
-        name='config language/lang',
+        name='config language',
         inline=False,
         value=(
             'เปลี่ยนแปลงการตั้งค่าระหว่าง ภาษาไทย กับ ภาษาอังกฤษ\n'
-            + '**การใช้**: `|config language` or `|config lang`'
+            '**การใช้งาน**: `|config language`\n'
+            '**คำเหมือน**: lang'
         )
     )
     embed.add_field(
-        name='config channel/logschannel\n',
+        name='config channel\n',
         inline=False,
         value=(
             'เปลี่ยนช่องในการเก็บ log\n'
-            + '**การใช้งาน**: `|config channel {channel}` or `|config logschannel {channel}`'
+            '**การใช้งาน**: `|config channel <channel>`\n'
+            '**คำเหมือน**: logs, lc, logschannel'
+        )
+    )
+    embed.add_field(
+        name='config changePrefix',
+        inline=False,
+        value=(
+            'เปลี่ยนคำนำหน้าของ Logker (ค่าเริ่มต้นคือ |)\n'
+            '**การใช้งาน**: `|config changePrefix <prefix>`\n'
+            '**คำเหมือน**: prefix, changeprefix'
         )
     )
     return embed
@@ -104,18 +130,19 @@ class Help(commands.Cog):
         self.client = client
 
     @commands.command()
-    @commands.has_guild_permissions(view_audit_log=True)
     async def help(self, ctx):
-        info = await find_guild_info(ctx.guild.id)
+        if ctx.guild is None:
+            config_lang = 'EN'
+        else:
+            info = await Database.find_info(ctx.guild.id)
 
-        if ctx.guild.id == info['guild_id']:
             # Seek config of guild
-            config_lang = 'EN' if info is None else info['logs_language']
+            config_lang = 'en' if info is None else info[2]
 
-            # Set language version of embed message
-            embed = help_en() if config_lang == 'EN' else help_th()
+        # Set language version of embed message
+        embed = help_en() if config_lang == 'en' else help_th()
 
-            await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
 def setup(client):

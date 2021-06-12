@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from events.find_info import find_guild_info
-import events.client_events as client_events
+from utils.database import Database
+from messages import client_events_msg
 
 
 class Client(commands.Cog):
@@ -11,43 +11,30 @@ class Client(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         uptime_channel = self.client.get_channel(833140105820242020)
-        embed = client_events.uptime_restart()
+        embed = client_events_msg.uptime_restart()
 
         await uptime_channel.send(embed=embed)
         await self.client.change_presence(
             status=discord.Status.online,
             activity=discord.Activity(type=discord.ActivityType.listening,
                                       name=f'|help'))
+        # await self.client.change_presence(
+        #     status=discord.Status.online,
+        #     activity=discord.Activity(type=discord.ActivityType.listening,
+        #                               name=f'Fixing the bugs!'))
         print('Client is online!')
-
-    @commands.command()
-    @commands.is_owner()
-    async def logout(self, _):
-        print('Client Logout!')
-        await self.client.close()
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
+        main_server = self.client.get_channel(833224379562590218)
+
         for channel in guild.text_channels:
             if channel.permissions_for(guild.me).send_messages:
                 owner = self.client.get_user(254515724804947969)
-                await channel.send(embed=client_events.guild_join(owner))
+                await channel.send(embed=client_events_msg.guild_join(owner))
             break
 
-    @commands.command()
-    async def info(self, ctx):
-        info = await find_guild_info(ctx.guild.id)
-        config_lang = 'EN' if info is None else info['logs_language']
-        owner = self.client.get_user(254515724804947969)
-        client = self.client
-
-        embed = client_events.info_en(ctx, owner, client) if config_lang == 'EN' else client_events.info_en(ctx, owner, client)
-
-        await ctx.send(embed=embed)
-
-    @commands.command()
-    async def ping(self, ctx):
-        await ctx.send(f':ping_pong: **Logker** latency is {round(self.client.latency * 1000)}ms!')
+        await main_server.send(f'Logker got into {guild.name}!')
 
     @commands.Cog.listener('on_message')
     async def member_mention_client(self, message: discord.Message):
@@ -57,8 +44,9 @@ class Client(commands.Cog):
         if message.author.bot:
             return
         if self.client.user.mentioned_in(message):
-            info = await find_guild_info(message.guild.id)
-            config_lang = 'EN' if info is None else info['logs_language']
+            info = await Database.find_info(message.guild.id)
+            config_lang = 'en' if info is None else info[2]
+            prefix = await Database.find_prefix(message.guild.id)
 
             if '@here' in message.content:
                 return
@@ -66,16 +54,9 @@ class Client(commands.Cog):
                 return
 
             await message.channel.send(
-                'I saw you mention me! Type `|help` if you really need help!' if config_lang == 'EN'
-                else 'เราเห็นแกต้องการความช่วยเหลือนะ พิมพ์ `|help` เพื่อดูคำสั่งทั้งหมด!'
+                f'I saw you mention me! Type `{prefix}help` if you really need help!' if config_lang == 'en'
+                else f'เราเห็นแกต้องการความช่วยเหลือนะ พิมพ์ `{prefix}help` เพื่อดูคำสั่งทั้งหมด!'
             )
-
-    @commands.command()
-    async def faq(self, ctx):
-        owner = self.client.get_user(254515724804947969)
-        embed = client_events.faq(owner)
-
-        await ctx.send(embed=embed)
 
 
 def setup(client):

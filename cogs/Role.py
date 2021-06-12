@@ -1,7 +1,7 @@
 import discord
+from messages import role_events_msg
 from discord.ext import commands
-import events.role_events as role_events
-from events.find_info import find_guild_info
+from utils.database import Database
 
 
 class Role(commands.Cog):
@@ -10,58 +10,61 @@ class Role(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_role_create(self, role):
-        info = await find_guild_info(role.guild.id)
+        info = await Database.find_info(role.guild.id)
 
-        if info['guild_id'] == role.guild.id:
+        if info is None:
+            return
+
+        if info[0] == role.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(
-                info['guild_id']).get_channel(info['channel_id'])
-
-            config_lang = 'EN' if info is None else info['logs_language']
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                role_events.guild_role_create_en(role) if config_lang == 'EN'
-                else role_events.guild_role_create_th(role)
+                role_events_msg.guild_role_create_en(role) if config_lang == 'en'
+                else role_events_msg.guild_role_create_th(role)
             )
 
             await logs_channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role):
-        info = await find_guild_info(role.guild.id)
+        info = await Database.find_info(role.guild.id)
 
-        if info['guild_id'] == role.guild.id:
+        if info is None:
+            return
+
+        if info[0] == role.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(
-                info['guild_id']).get_channel(info['channel_id'])
-
-            config_lang = 'EN' if info is None else info['logs_language']
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                role_events.guild_role_delete_en(role) if config_lang == 'EN'
-                else role_events.guild_role_delete_th(role)
+                role_events_msg.guild_role_delete_en(role) if config_lang == 'en'
+                else role_events_msg.guild_role_delete_th(role)
             )
 
             await logs_channel.send(embed=embed)
 
     @commands.Cog.listener('on_guild_role_update')
     async def guild_role_name_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
-        info = await find_guild_info(after.guild.id)
+        info = await Database.find_info(after.guild.id)
 
-        if info['guild_id'] == after.guild.id:
+        if info is None:
+            return
+
+        if info[0] == after.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(
-                info['guild_id']).get_channel(info['channel_id'])
-
-            config_lang = 'EN' if info is None else info['logs_language']
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.name != after.name:
                 # Set language version of embed message
                 embed = (
-                    role_events.guild_role_name_update_en(before, after) if config_lang == 'EN'
-                    else role_events.guild_role_name_update_en(before, after)
+                    role_events_msg.guild_role_name_update_en(before, after) if config_lang == 'en'
+                    else role_events_msg.guild_role_name_update_en(before, after)
                 )
 
                 await logs_channel.send(embed=embed)

@@ -1,7 +1,8 @@
 import discord
 from discord.ext import commands
-import events.member_events as member_events
-from events.find_info import find_guild_info
+
+from utils.database import Database
+from messages import member_events_msg
 
 
 class Member(commands.Cog):
@@ -10,34 +11,80 @@ class Member(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        info = await find_guild_info(member.guild.id)
+        info = await Database.find_info(member.guild.id)
 
-        if info['guild_id'] == member.guild.id:
+        if info is None:
+            return
+
+        if info[0] == member.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                member_events.member_join_en(member) if config_lang == 'EN'
-                else member_events.member_join_th(member)
+                member_events_msg.member_join_en(member) if config_lang == 'en'
+                else member_events_msg.member_join_th(member)
             )
 
             await logs_channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        info = await find_guild_info(member.guild.id)
+        info = await Database.find_info(member.guild.id)
 
-        if info['guild_id'] == member.guild.id:
+        if info is None:
+            return
+
+        if info[0] == member.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             # Set language version of embed message
             embed = (
-                member_events.member_remove_en(member) if config_lang == 'EN'
-                else member_events.member_remove_th(member)
+                member_events_msg.member_remove_en(member) if config_lang == 'en'
+                else member_events_msg.member_remove_th(member)
+            )
+
+            await logs_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
+        info = await Database.find_info(guild.id)
+
+        if info is None:
+            return
+
+        if info[0] == guild.id:
+            # Seek Logs Channel of guild
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
+
+            # Set language version of embed message
+            embed = (
+                member_events_msg.member_ban_en(guild, user) if config_lang == 'en'
+                else member_events_msg.member_ban_th(guild, user)
+            )
+
+            await logs_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user):
+        info = await Database.find_info(guild.id)
+
+        if info is None:
+            return
+
+        if info[0] == guild.id:
+            # Seek Logs Channel of guild
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
+
+            # Set language version of embed message
+            embed = (
+                member_events_msg.member_unban_en(guild, user) if config_lang == 'en'
+                else member_events_msg.member_unban_th(guild, user)
             )
 
             await logs_channel.send(embed=embed)
@@ -49,21 +96,23 @@ class Member(commands.Cog):
         if before.status != after.status:
             return
 
-        info = await find_guild_info(after.guild.id)
+        info = await Database.find_info(before.guild.id)
 
-        if info['guild_id'] == after.guild.id:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info is None:
+            return
+
+        if info[0] == before.guild.id:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.display_name != after.display_name:
-                if after.guild.id == info['guild_id']:
-                    # Set language version of embed message
-                    embed = (
-                        member_events.member_name_update_en(before, after) if config_lang == 'EN'
-                        else member_events.member_name_update_th(before, after)
-                    )
+                # Set language version of embed message
+                embed = (
+                    member_events_msg.member_name_update_en(before, after) if config_lang == 'en'
+                    else member_events_msg.member_name_update_th(before, after)
+                )
 
-                    await logs_channel.send(embed=embed)
+                await logs_channel.send(embed=embed)
 
     @commands.Cog.listener('on_member_update')
     async def member_role_update(self, before: discord.Member, after: discord.member):
@@ -72,12 +121,15 @@ class Member(commands.Cog):
         if before.status != after.status:
             return
 
-        info = await find_guild_info(after.guild.id)
+        info = await Database.find_info(before.guild.id)
 
-        if info['guild_id'] == after.guild.id:
-            guild_log = self.client.get_guild(info['guild_id'])
-            logs_channel = guild_log.get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info is None:
+            return
+
+        if info[0] == after.guild.id:
+            guild_log = self.client.get_guild(info[0])
+            logs_channel = guild_log.get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.roles != after.roles:
                 for guild in after.guild.roles:
@@ -86,8 +138,8 @@ class Member(commands.Cog):
 
                 # Set language version of embed message
                 embed = (
-                    member_events.member_role_update_en(before, after) if config_lang == 'EN'
-                    else member_events.member_role_update_th(before, after)
+                    member_events_msg.member_role_update_en(before, after) if config_lang == 'EN'
+                    else member_events_msg.member_role_update_th(before, after)
                 )
 
                 await logs_channel.send(embed=embed)
@@ -106,11 +158,14 @@ class Member(commands.Cog):
             else:
                 return
 
-        info = await find_guild_info(member.guild.id)
+        info = await Database.find_info(member.guild.id)
 
-        if member.guild.id == info['guild_id']:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info is None:
+            return
+
+        if member.guild.id == info[0]:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.channel is not after.channel:
                 channel = self.client.get_channel(after.channel.id)
@@ -118,13 +173,13 @@ class Member(commands.Cog):
 
                 if isinstance(channel, discord.VoiceChannel):
                     embed = (
-                        member_events.member_join_voice_chat_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_join_voice_chat_th(member, channel)
+                        member_events_msg.member_join_voice_chat_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_join_voice_chat_th(member, channel)
                     )
                 elif isinstance(channel, discord.StageChannel):
                     embed = (
-                        member_events.member_join_stage_chat_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_join_stage_chat_th(member, channel)
+                        member_events_msg.member_join_stage_chat_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_join_stage_chat_th(member, channel)
                     )
 
                 await logs_channel.send(embed=embed)
@@ -144,11 +199,14 @@ class Member(commands.Cog):
             else:
                 return
 
-        info = await find_guild_info(member.guild.id)
+        info = await Database.find_info(member.guild.id)
 
-        if member.guild.id == info['guild_id']:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info is None:
+            return
+
+        if member.guild.id == info[0]:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.channel != after.channel:
                 channel = self.client.get_channel(before.channel.id)
@@ -156,13 +214,13 @@ class Member(commands.Cog):
 
                 if isinstance(channel, discord.VoiceChannel):
                     embed = (
-                        member_events.member_leave_voice_chat_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_leave_voice_chat_th(member, channel)
+                        member_events_msg.member_leave_voice_chat_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_leave_voice_chat_th(member, channel)
                     )
                 elif isinstance(channel, discord.StageChannel):
                     embed = (
-                        member_events.member_leave_stage_chat_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_leave_stage_chat_th(member, channel)
+                        member_events_msg.member_leave_stage_chat_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_leave_stage_chat_th(member, channel)
                     )
 
                 await logs_channel.send(embed=embed)
@@ -182,19 +240,22 @@ class Member(commands.Cog):
             else:
                 return
 
-        info = await find_guild_info(member.guild.id)
+        info = await Database.find_info(member.guild.id)
 
-        if member.guild.id == info['guild_id']:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info is None:
+            return
+
+        if member.guild.id == info[0]:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'en' if info is None else info[2]
 
             if before.channel != after.channel:
                 before = self.client.get_channel(before.channel.id)
                 after = self.client.get_channel(after.channel.id)
 
                 embed = (
-                    member_events.member_change_voice_chat_en(member, before, after) if config_lang == 'EN'
-                    else member_events.member_change_voice_chat_th(member, before, after)
+                    member_events_msg.member_change_voice_chat_en(member, before, after) if config_lang == 'en'
+                    else member_events_msg.member_change_voice_chat_th(member, before, after)
                 )
 
                 await logs_channel.send(embed=embed)
@@ -213,19 +274,22 @@ class Member(commands.Cog):
             else:
                 pass
 
-        info = await find_guild_info(member.guild.id)
+        info = await Database.find_info(member.guild.id)
 
-        if member.guild.id == info['guild_id']:
-            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
-            config_lang = 'EN' if info is None else info['logs_language']
+        if info is None:
+            return
+
+        if member.guild.id == info[0]:
+            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+            config_lang = 'EN' if info is None else info[2]
 
             channel = self.client.get_channel(after.channel.id)
 
             if before.deaf is after.deaf:
                 if after.mute is False:
                     embed = (
-                        member_events.member_guild_voice_unmute_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_guild_voice_unmute_th(member, channel)
+                        member_events_msg.member_guild_voice_unmute_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_guild_voice_unmute_th(member, channel)
                     )
 
                     await logs_channel.send(embed=embed)
@@ -233,8 +297,8 @@ class Member(commands.Cog):
 
                 elif after.mute is True:
                     embed = (
-                        member_events.member_guild_voice_mute_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_guild_voice_mute_th(member, channel)
+                        member_events_msg.member_guild_voice_mute_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_guild_voice_mute_th(member, channel)
                     )
 
                     await logs_channel.send(embed=embed)
@@ -243,8 +307,8 @@ class Member(commands.Cog):
             if before.deaf is not after.deaf:
                 if after.deaf is False:
                     embed = (
-                        member_events.member_guild_voice_undeaf_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_guild_voice_undeaf_th(member, channel)
+                        member_events_msg.member_guild_voice_undeaf_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_guild_voice_undeaf_th(member, channel)
                     )
 
                     await logs_channel.send(embed=embed)
@@ -252,8 +316,8 @@ class Member(commands.Cog):
 
                 elif after.deaf is True:
                     embed = (
-                        member_events.member_guild_voice_deaf_en(member, channel) if config_lang == 'EN'
-                        else member_events.member_guild_voice_deaf_th(member, channel)
+                        member_events_msg.member_guild_voice_deaf_en(member, channel) if config_lang == 'en'
+                        else member_events_msg.member_guild_voice_deaf_th(member, channel)
                     )
 
                     await logs_channel.send(embed=embed)
