@@ -89,7 +89,7 @@ This bot based on discord.py library and in huge development! If you want to sub
 
 ## Technology behind this
 - discord.py library
-- MySql
+- MySQL (I f up with Mongo, Postgres and SQLite)
 
 Love you guys, Specially server owners ❤
 <br>-- Sun
