@@ -87,6 +87,10 @@ This bot based on discord.py library and in huge development! If you want to sub
 - Send message when member join or leave the server/voice channel.
 - Send information when member update channel, etc.
 
+## Technology behind this
+- discord.py library
+- MySql
+
 Love you guys, Specially server owners ❤
 <br>-- Sun
 
