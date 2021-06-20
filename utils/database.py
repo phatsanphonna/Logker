@@ -1,62 +1,42 @@
-import aiosqlite
+import motor.motor_asyncio
+
+db = ''
+
+with open('_token_/mongotoken.txt') as f:
+    db = motor.motor_asyncio.AsyncIOMotorClient(f.readline()).LogBot
 
 
 class Database:
-    @staticmethod
-    async def find_info(guild_id):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
-        cursor = await db.execute(f'SELECT * FROM guild_info WHERE guild_id={guild_id}')
-        row = await cursor.fetchone()
-        # print(guild_id, row)
-        return row
+    def __init__(self, guild_id):
+        self.guild_id = guild_id
+    
+    async def info_exists(self):
+        data = await db.guild_info.find_one({'guild_id': self.guild_id})
+        return True if data is not None else False
 
-    @staticmethod
-    async def find_prefix(guild_id):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
-        cursor = await db.execute(f'SELECT prefix FROM guild_prefix WHERE guild_id={guild_id}')
-        row = await cursor.fetchone()
-        # print(row)
-        return row[0] if row is not None else row
+    async def prefix_exists(self):
+        data = await db.guild_prefix.find_one({'guild_id': self.guild_id})
+        return True if data is not None else False
 
-    @staticmethod
-    async def update_language(guild_id, new_lang):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
+    async def find_info(self):
+        return await db.guild_info.find_one({'guild_id': self.guild_id})
 
-        await db.execute(
-            f'UPDATE guild_info SET logs_language="{new_lang}" WHERE guild_id={guild_id}')
-        await db.commit()
-        await db.close()
+    async def find_prefix(self):
+        data = await db.guild_prefix.find_one({'guild_id': self.guild_id})
+        return data['prefix']
 
-    @staticmethod
-    async def update_channel(guild_id, channel_id):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
-        await db.execute(
-            f'UPDATE guild_info SET channel_id={channel_id} WHERE guild_id={guild_id}')
-        await db.commit()
-        await db.close()
+    async def update_prefix(self, prefix):
+        await db.guild_prefix.update_one({'guild_id': self.guild_id}, {'$set': {'prefix': prefix}})
 
-    @staticmethod
-    async def update_prefix(guild_id, prefix):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
-        await db.execute(
-            f'UPDATE guild_prefix SET prefix="{prefix}" WHERE guild_id={guild_id}')
-        await db.commit()
-        await db.close()
+    async def update_channel(self, channel_id):
+        await db.guild_info.update_one({'guild_id': self.guild_id}, {'$set': {'channel_id': channel_id}})
 
-    @staticmethod
-    async def insert_prefix(guild_id):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
-        await db.execute(
-            f'INSERT INTO guild_prefix VALUES(guild_id={guild_id}, prefix="|")')
-        await db.commit()
-        await db.close()
+    async def update_language(self, language):
+        await db.guild_info.update_one({'guild_id': self.guild_id}, {'$set': {'logs_language': language}})
 
-    @staticmethod
-    async def setup(guild_id, channel_id):
-        db = await aiosqlite.connect('db.db', check_same_thread=False)
-        await db.execute(
-            f'INSERT INTO guild_info VALUES(guild_id={guild_id}, channel_id="{channel_id}, logs_language="en")')
-        await db.commit()
-        await db.close()
+    async def insert_prefix(self):
+        await db.guild_prefix.insert_one({'guild_id': self.guild_id, 'prefix': '|'})
 
+    async def setup(self, channel_id):
+        await db.guild_info.insert_one({'guild_id': self.guild_id, 'channel_id': channel_id, 'logs_language': 'en'})
         return True
