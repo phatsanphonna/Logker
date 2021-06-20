@@ -19,8 +19,14 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def info(self, ctx):
-        info = await Database.find_info(ctx.guild.id) if ctx.guild is not None else None
-        config_lang = 'en' if info is None else info[2]
+        try:
+            db = Database(ctx.guild.id)  # Create a new instance
+
+            info = await db.find_info()
+            config_lang = info['logs_language'] if info is not None else 'en'
+
+        except Exception:
+            config_lang = 'en'
 
         owner = self.client.get_user(254515724804947969)
 
@@ -28,6 +34,7 @@ class Misc(commands.Cog):
             embed=misc_msg.info_en(ctx, owner, self.client) if config_lang == 'en'
             else misc_msg.info_en(ctx, owner, self.client)
         )
+
         await ctx.send(file=discord.File('assets/chaewon_muah.gif'))
 
     @commands.command()

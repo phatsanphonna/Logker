@@ -41,12 +41,20 @@ class Client(commands.Cog):
         # Prevent client responds to itself
         if message.author is self.client.user:
             return
+
         if message.author.bot:
             return
+
         if self.client.user.mentioned_in(message):
-            info = await Database.find_info(message.guild.id)
-            config_lang = 'en' if info is None else info[2]
-            prefix = await Database.find_prefix(message.guild.id)
+            db = Database(message.guild.id)  # Create a new instance
+
+            if not await db.info_exists():  # Check if that server has Logker setup?
+                config_lang = 'en'
+            else:
+                info = await db.find_info()
+                config_lang = info[2]
+
+            prefix = await db.find_prefix()
 
             if '@here' in message.content:
                 return

@@ -1,8 +1,9 @@
 import psutil
-import discord
+from discord import Embed, Colour
 from os import system, listdir
 from discord.ext import commands
 from datetime import datetime, timedelta
+from utils import database
 
 
 def get_size(b, suffix="B"):
@@ -38,9 +39,9 @@ class Owner(commands.Cog):
                 self.client.load_extension(f'cogs.{f[:-3]}')
                 print(f'cogs.{f[:-3]} loaded')
 
-        await ctx.send(embed=discord.Embed(
+        await ctx.send(embed=Embed(
             description='🔄 Cogs Reload!',
-            color=discord.Color.gold()
+            color=Colour.gold()
         ))
         await self.client.get_channel(846230758996967454).send(
             f'{(datetime.now() + timedelta(hours=7)).strftime("%B %d, %Y @%H:%M:%S")}\n'
@@ -58,10 +59,10 @@ class Owner(commands.Cog):
     @commands.group(invoke_without_command=True)
     @commands.is_owner()
     async def system(self, ctx):
-        embed = discord.Embed(
+        embed = Embed(
             title='System Info',
             timestamp=datetime.utcnow(),
-            color=discord.Colour.gold()
+            color=Colour.gold()
         )
 
         svmem = psutil.virtual_memory()
@@ -94,16 +95,42 @@ class Owner(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['clientinfo', 'cinfo'])
+    @commands.is_owner()
     async def client_info(self, ctx):
-        embed = discord.Embed(
+        embed = Embed(
             title='Client Info',
-            color=discord.Color.gold(),
+            color=Colour.gold(),
             timestamp=datetime.utcnow()
         )
-        embed.add_field(name='Total Guilds', value=f'{str(len(self.client.guilds))} guilds')
-        embed.add_field(name='Ping', value=f'{round(self.client.latency*1000)} ms')
+        embed.add_field(name='Total Guilds',
+                        value=f'{str(len(self.client.guilds))}')
+        embed.add_field(
+            name='Ping', value=f'{round(self.client.latency*1000)} ms')
 
         await ctx.send(embed=embed)
+
+    @commands.command(aliases=['db'])
+    @commands.is_owner()
+    async def database(self, ctx, *, args):
+        con = await database.connect()
+        rows = await con.fetch(args)
+        if 'SELECT' in args:
+            if 'guild_info' in args:
+                contents = '> guild_info <\n' + \
+                    f'guild_id{" "*11}| channel_id{" "*9}| logs_language\n'
+
+                for row in rows:
+                    contents += f'{row[0]} | {row[1]} | {row[2]}\n'
+
+            elif 'guild_prefix' in args:
+                contents = '> guild_prefix <\n' + f'guild_id{" "*11}| prefix\n'
+
+                for row in rows:
+                    contents += f'{row[0]} | {row[1]}\n'
+
+        await ctx.send(f'```{contents}```')
+
+        await con.close()
 
 
 def setup(client):

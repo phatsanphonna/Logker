@@ -46,7 +46,7 @@ def missing_channel():
     embed = discord.Embed(
         title='Missing Channel',
         color=discord.Color.red(),
-        description='You have to specific text channel to setup.'
+        description='You have to provide a text channel to setup.'
     )
 
     return embed
@@ -59,10 +59,10 @@ class Setup(commands.Cog):
     @commands.command()
     @commands.has_guild_permissions(view_audit_log=True)
     async def setup(self, ctx, channel: discord.TextChannel):
-        info = await Database.find_info(ctx.guild.id)
+        db = Database(ctx.guild.id)
 
-        if info is None:
-            logs_setup = await Database.setup(ctx.guild.id, channel.id)
+        if not await db.find_info():
+            logs_setup = await db.setup(channel.id)
 
             if logs_setup:
                 embed = discord.Embed(
@@ -76,15 +76,16 @@ class Setup(commands.Cog):
                 )
 
                 msg = await (ctx if channel is None else channel).send(embed=embed)
+                await msg.add_reaction('✅')
+
                 await (ctx if channel is None else channel).send(
                     file=discord.File('assets/yujin_wonyoung_thumbs_up.gif'))
 
                 main_server = self.client.get_channel(833224379562590218)
                 await main_server.send(f'Logker has setup in {ctx.guild.name}!')
-
-                await msg.add_reaction('✅')
         else:
-            lang = 'en' if info is None else info[2]
+            info = await db.find_info()
+            lang = 'en' if info is None else info['logs_language']
             embed = already_setup_en(ctx) if lang == 'en' else already_setup_th(ctx)
 
             await ctx.send(embed=embed)

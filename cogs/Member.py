@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-
 from utils.database import Database
 from messages import member_events_msg
 
@@ -11,15 +10,18 @@ class Member(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        info = await Database.find_info(member.guild.id)
+        db = Database(member.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == member.guild.id:
+        info = await db.find_info()
+
+        if info['guild_id'] == member.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -31,15 +33,18 @@ class Member(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        info = await Database.find_info(member.guild.id)
+        db = Database(member.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == member.guild.id:
+        info = await db.find_info()
+
+        if info['guild_id'] == member.guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -51,15 +56,18 @@ class Member(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, user):
-        info = await Database.find_info(guild.id)
+        db = Database(guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == guild.id:
+        info = await db.find_info()
+
+        if info['guild_id'] == guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -71,15 +79,18 @@ class Member(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_unban(self, guild, user):
-        info = await Database.find_info(guild.id)
+        db = Database(guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == guild.id:
+        info = await db.find_info()
+
+        if info['guild_id'] == guild.id:
             # Seek Logs Channel of guild
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -96,14 +107,17 @@ class Member(commands.Cog):
         if before.status != after.status:
             return
 
-        info = await Database.find_info(before.guild.id)
+        db = Database(before.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == before.guild.id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == before.guild.id:
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             if before.display_name != after.display_name:
                 # Set language version of embed message
@@ -115,21 +129,23 @@ class Member(commands.Cog):
                 await logs_channel.send(embed=embed)
 
     @commands.Cog.listener('on_member_update')
-    async def member_role_update(self, before: discord.Member, after: discord.member):
+    async def member_role_update(self, before: discord.Member, after: discord.Member):
         if before.activity != after.activity:
             return
         if before.status != after.status:
             return
 
-        info = await Database.find_info(before.guild.id)
+        db = Database(before.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == after.guild.id:
-            guild_log = self.client.get_guild(info[0])
-            logs_channel = guild_log.get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == before.guild.id:
+            guild_log = self.client.get_guild(info['guild_id'])
+            logs_channel = guild_log.get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             if before.roles != after.roles:
                 for guild in after.guild.roles:
@@ -138,7 +154,7 @@ class Member(commands.Cog):
 
                 # Set language version of embed message
                 embed = (
-                    member_events_msg.member_role_update_en(before, after) if config_lang == 'EN'
+                    member_events_msg.member_role_update_en(before, after) if config_lang == 'en'
                     else member_events_msg.member_role_update_th(before, after)
                 )
 
@@ -158,14 +174,17 @@ class Member(commands.Cog):
             else:
                 return
 
-        info = await Database.find_info(member.guild.id)
+        db = Database(member.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if member.guild.id == info[0]:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == member.guild.id:
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             if before.channel is not after.channel:
                 channel = self.client.get_channel(after.channel.id)
@@ -199,14 +218,17 @@ class Member(commands.Cog):
             else:
                 return
 
-        info = await Database.find_info(member.guild.id)
+        db = Database(member.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if member.guild.id == info[0]:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == member.guild.id:
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             if before.channel != after.channel:
                 channel = self.client.get_channel(before.channel.id)
@@ -240,14 +262,17 @@ class Member(commands.Cog):
             else:
                 return
 
-        info = await Database.find_info(member.guild.id)
+        db = Database(member.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if member.guild.id == info[0]:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == member.guild.id:
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             if before.channel != after.channel:
                 before = self.client.get_channel(before.channel.id)
@@ -274,14 +299,17 @@ class Member(commands.Cog):
             else:
                 pass
 
-        info = await Database.find_info(member.guild.id)
+        db = Database(member.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if member.guild.id == info[0]:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'EN' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == member.guild.id:
+            logs_channel = self.client.get_guild(
+                info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             channel = self.client.get_channel(after.channel.id)
 

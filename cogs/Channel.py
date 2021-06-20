@@ -10,14 +10,16 @@ class Channel(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel):
-        info = await Database.find_info(channel.guild.id)
+        db = Database(channel.guild.id)
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == channel.guild.id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == channel.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -29,14 +31,16 @@ class Channel(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
-        info = await Database.find_info(channel.guild.id)
+        db = Database(channel.guild.id)
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == channel.guild.id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        if info['guild_id'] == channel.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -48,15 +52,17 @@ class Channel(commands.Cog):
 
     @commands.Cog.listener('on_guild_channel_update')
     async def guild_channel_name_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
-        info = await Database.find_info(before.guild.id)
+        db = Database(before.guild.id)
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == after.guild.id:
+        info = await db.find_info()
+
+        if info['guild_id'] == after.guild.id:
             if before.name != after.name:
-                logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-                config_lang = 'en' if info is None else info[2]
+                logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+                config_lang = 'en' if info is None else info['logs_language']
 
                 # Set language version of embed message
                 embed = (
@@ -68,13 +74,15 @@ class Channel(commands.Cog):
 
     @commands.Cog.listener('on_guild_channel_update')
     async def guild_channel_role_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel):
-        info = await Database.find_info(before.guild.id)
+        db = Database(before.guild.id)
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        if info[0] == before.guild.id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
+        info = await db.find_info()
+
+        if info['guild_id'] == after.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
             config_lang = 'en' if info is None else info[2]
 
             if before.changed_roles != after.changed_roles:
@@ -92,13 +100,14 @@ class Channel(commands.Cog):
                 if len(before_total_roles) == 1:
                     # Set language version of embed message
                     embed = (
-                        channel_events_msg.guild_channel_role_remove_en(after, before_total_roles) if config_lang == 'EN'
+                        channel_events_msg.guild_channel_role_remove_en(
+                            after, before_total_roles) if config_lang == 'en'
                         else channel_events_msg.guild_channel_role_remove_th(after, before_total_roles)
                     )
                 elif len(after_total_roles) == 1:
                     # Set language version of embed message
                     embed = (
-                        channel_events_msg.guild_channel_role_append_en(after, after_total_roles) if config_lang == 'EN'
+                        channel_events_msg.guild_channel_role_append_en(after, after_total_roles) if config_lang == 'en'
                         else channel_events_msg.guild_channel_role_append_th(after, after_total_roles)
                     )
 

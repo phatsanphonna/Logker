@@ -10,14 +10,19 @@ class Reaction(commands.Cog):
 
     @commands.Cog.listener('on_reaction_add')
     async def reaction_add(self, reaction: discord.Reaction, user: discord.Member):
-        info = await Database.find_info(user.guild.id)
-
-        if info is None:
+        if user.bot:
             return
 
-        if user.guild.id == info[0]:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        db = Database(user.guild.id)  # Create a new instance
+
+        if not await db.info_exists():  # Check if that server has Logker setup?
+            return
+
+        info = await db.find_info()
+
+        if info['guild_id'] == user.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             embed = (
                 reaction_events_msg.reaction_add_en(reaction, user) if config_lang == 'en'
@@ -28,14 +33,19 @@ class Reaction(commands.Cog):
 
     @commands.Cog.listener('on_reaction_remove')
     async def reaction_remove(self, reaction: discord.Reaction, user: discord.Member):
-        info = await Database.find_info(user.guild.id)
-
-        if info is None:
+        if user.bot:
             return
 
-        if user.guild.id == info[0]:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        db = Database(user.guild.id)  # Create a new instance
+
+        if not await db.info_exists():  # Check if that server has Logker setup?
+            return
+
+        info = await db.find_info()
+
+        if info['guild_id'] == user.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             embed = (
                 reaction_events_msg.reaction_remove_en(reaction, user) if config_lang == 'en'

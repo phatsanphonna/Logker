@@ -132,12 +132,14 @@ class Help(commands.Cog):
     @commands.command()
     async def help(self, ctx):
         if ctx.guild is None:
-            config_lang = 'EN'
+            config_lang = 'en'
         else:
-            info = await Database.find_info(ctx.guild.id)
+            db = Database(ctx.guild.id)  # Create a new instance
+
+            info = await db.find_info()
 
             # Seek config of guild
-            config_lang = 'en' if info is None else info[2]
+            config_lang = 'en' if info is None else info['logs_language']
 
         # Set language version of embed message
         embed = help_en() if config_lang == 'en' else help_th()

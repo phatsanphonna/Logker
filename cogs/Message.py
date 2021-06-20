@@ -12,16 +12,17 @@ class Message(commands.Cog):
         if message.author.bot:
             return
 
-        # Seek info of guild
-        info = await Database.find_info(message.guild.id)
+        db = Database(message.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
+        info = await db.find_info()
+
         # Check if guild_id is equal to message.guild.id
-        if info[0] == message.guild.id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        if info['guild_id'] == message.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -36,16 +37,17 @@ class Message(commands.Cog):
         if payload.cached_message:
             return
 
-        # Seek info of guild
-        info = await Database.find_info(payload.guild_id)
+        db = Database(payload.guild_id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
-        # Check if guild_id is equal to message.guild.id
-        if info[0] == payload.guild_id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        info = await db.find_info()
+
+        # Check if guild_id is equal to payload.guild.id
+        if info['guild_id'] == payload.guild_id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
@@ -60,16 +62,17 @@ class Message(commands.Cog):
         if after.author.bot:
             return
 
-        # Seek info of guild
-        info = await Database.find_info(before.guild.id)
+        db = Database(before.guild.id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
+        info = await db.find_info()
+
         # Check if guild_id is equal to message.guild.id
-        if info[0] == after.guild.id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        if info['guild_id'] == after.guild.id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             if before.content != after.content:
                 # Set language version of embed message
@@ -85,16 +88,17 @@ class Message(commands.Cog):
         if payload.cached_message:
             return
 
-        # Seek info of guild
-        info = await Database.find_info(payload.guild_id)
+        db = Database(payload.guild_id)  # Create a new instance
 
-        if info is None:
+        if not await db.info_exists():  # Check if that server has Logker setup?
             return
 
+        info = await db.find_info()
+
         # Check if guild_id is equal to payload.guild.id
-        if info[0] == payload.guild_id:
-            logs_channel = self.client.get_guild(info[0]).get_channel(info[1])
-            config_lang = 'en' if info is None else info[2]
+        if info['guild_id'] == payload.guild_id:
+            logs_channel = self.client.get_guild(info['guild_id']).get_channel(info['channel_id'])
+            config_lang = 'en' if info is None else info['logs_language']
 
             # Set language version of embed message
             embed = (
