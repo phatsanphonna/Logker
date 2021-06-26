@@ -9,7 +9,7 @@ Logker is a logging bot suitable for small to mid-size server range. Support bot
 #### Please read [privacy policy](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md) first!<br>ได้โปรดอ่าน[นโยบายความเป็นส่วนตัว](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md)ก่อนนะครับ!
 
 ## Get Started
-If you don't konw Logker'as prefix, you can ping Logker or type this
+If you don't know Logker'as prefix, you can ping Logker or type this
 <br> ถ้าไม่รู้ prefix ของ Logker ให้ปิง Logker หรือพิมพ์ตามนี้
 ```
 Logker, What is your prefix?
@@ -17,7 +17,7 @@ Logker, What is your prefix?
 ```
 Logker, prefix ของแกคืออะไร
 ```
-If Logker never setup before, type this command. Your typing channel will be logs channel. (default language will be English.)
+If Logker never setup before, type this command. Your typing channel will be the logs channel. (default language will be English.)
 <br>ถ้า Logker ไม่เคยตั้งค่ามาก่อน ให้ใช้คำสั่งนี้ ช่องที่พิมพ์จะถูกตั้งค่าเป็นช่องเก็บประวัติโดยอัตโนมัติ (ภาษาเริ่มต้นเป็น ภาษาอังกฤษ)
 ```
 |setup
@@ -59,7 +59,7 @@ If you want to change language, use this command. It will automatically toggle b
 ```
 |config/settings language
 ```
-If you want to change logging channel, use this command (ONLY TEXT CHANNELS!).
+If you want to change the logging channel, use this command (ONLY TEXT CHANNELS!).
 <br>ถ้าอยากเปลี่ยนช่องที่เก็บประวัติ ให้ใช้คำสั่งนี้ (ห้องพิมพ์เท่านั้น!)
 ```
 |config/settings logs <channel_mention>
@@ -73,26 +73,26 @@ If you want to change logging channel, use this command (ONLY TEXT CHANNELS!).
 
 ## Logker's Info
 High School project created for competition to get into a university (If possible and hope committee will notice me). I hope this project can help me get into university.
-So, I want this to be my one of my portfolio to get a chance in competition.
+So, I want this to be my one of my portfolio to get a chance in the competition.
 
-This bot based on discord.py library and in huge development! If you want to submit found bugs,  incorrect grammar or everything error that bot gives you will be huge thanks for me! Please contact me at Discord: Sun#6284
+This bot is based on the discord.py library and in huge development! If you want to submit found bugs,  incorrect grammar, or everything error that bot gives you will be huge thanks for me! Please contact me at Discord: Sun#6284
 
-#### Lanugage Support
+#### Language Support
 - Thai
 - English
 
 ## Logker can do
-- Send a delete or edit messages
-- Send information when server updated things, etc. (under development!)
-- Send message when member join or leave the server/voice channel.
-- Send information when member update channel, etc.
+- Send delete or edit messages
+- Send information when the server updated things, etc. (under development!)
+- Send a message when members join or leave the server/voice channel.
+- Send information when members update the channel, etc.
+
+Love you guys, Especially server owners ❤
+<br>-- Sun
 
 ## Technology behind this
 - discord.py library
 - MongoDB
-
-Love you guys, Specially server owners ❤
-<br>-- Sun
 
 Support me for server days extension and MongoDB size increase
 <br>Ko-Fi: [https://ko-fi.com/ssuniie](https://ko-fi.com/ssuniie)
