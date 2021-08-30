@@ -8,6 +8,9 @@ Logker is a logging bot suitable for small to mid-size server range. Support bot
 <br>
 #### Please read [privacy policy](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md) first!<br>ได้โปรดอ่าน[นโยบายความเป็นส่วนตัว](https://github.com/ssuniie/Logker/blob/main/privacy-policy.md)ก่อนนะครับ!
 
+## Invite Logker
+top.gg: [https://top.gg/bot/831378338408300574](https://top.gg/bot/831378338408300574)
+
 ## Get Started
 If you don't know Logker'as prefix, you can ping Logker or type this
 <br> ถ้าไม่รู้ prefix ของ Logker ให้ปิง Logker หรือพิมพ์ตามนี้
