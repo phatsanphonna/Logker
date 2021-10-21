@@ -95,6 +95,7 @@ Love you guys, Especially server owners ❤
 
 ## Stack
 - discord.py
+- Nest.js (Future)
 - MongoDB (Azure Cloud)
 - Azure Virtual Machine
 
