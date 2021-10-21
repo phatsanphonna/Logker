@@ -93,9 +93,10 @@ This bot is based on the discord.py library and in huge development! If you want
 Love you guys, Especially server owners ❤
 <br>-- Sun
 
-## Technology behind this
-- discord.py library
-- MongoDB
+## Stack
+- discord.py
+- MongoDB (Azure Cloud)
+- Azure Virtual Machine
 
 Support me for server days extension and MongoDB size increase
 <br>Ko-Fi: [https://ko-fi.com/ssuniie](https://ko-fi.com/ssuniie)
